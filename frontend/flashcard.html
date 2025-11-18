@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashcards</title>
+  <link rel="stylesheet" href="flashcard.css" />
+</head>
+<div id="toastContainer"></div>
+<body>
+  <header>
+  <div class="header-top">
+    <h2>Welcome to CardMint, <span id="usernameDisplay"></span>!</h2>
+    <a href="login.html" id="logoutBtn" class="logout-btn">Logout</a>
+  </div>
+
+  <p class="motto">Create, flip, and master your notes.</p>
+  <p id="loginStatus" style="color: red; font-weight: bold;"></p>
+</header>
+
+
+  <main class="container">
+    <section class="create-section">
+      <h3>Create a Flashcard</h3>
+      <label for="title">Flashcard Title</label>
+      <input type="text" id="title" placeholder="Enter flashcard title" />
+
+      <div class="card-preview">
+        <div class="flashcard" id="previewCard">
+          <div class="front">
+            <label>Front (Question)</label>
+            <textarea id="question" placeholder="Type your question..."></textarea>
+          </div>
+          <div class="back">
+            <label>Back (Answer)</label>
+            <textarea id="answer" placeholder="Type your answer..."></textarea>
+          </div>
+        </div>
+        <button id="flipPreview">Flip</button>
+      </div>
+
+      <button id="saveFlashcard">Save Flashcard</button>
+    </section>
+
+    <section class="list-section">
+      <h3>My Flashcards</h3>
+      <div id="flashcardList" class="flashcard-list"></div>
+    </section>
+  </main>
+
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+
+    <button class="close-btn" id="closeEditModal">&times;</button>
+
+    <div class="modal-body">
+
+      <div class="edit-side">
+        <h3>Front</h3>
+        <textarea id="editFront"></textarea>
+      </div>
+
+      <div class="edit-side">
+        <h3>Back</h3>
+        <textarea id="editBack"></textarea>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button id="saveEditBtn" class="save-btn">Save Changes</button>
+      <button id="deleteCardBtn" class="delete-btn">Delete</button>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+    &copy; 2025 CardMint. All rights reserved.
+  </footer>
+
+  <script src="flashcard.js"></script>
+</body>
+</html>

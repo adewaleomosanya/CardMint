@@ -1,0 +1,84 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", sans-serif;
+    background-color: #0f2a46; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.branding {
+    text-align: center;
+    margin-top: 40px;
+    color: white;
+}
+
+.app-title {
+    font-size: 38px;
+    font-weight: 700;
+}
+
+.app-motto {
+    font-size: 15px;
+    opacity: 0.85;
+}
+
+.form-container {
+    margin-top: 50px;
+    background: white;
+    padding: 35px;
+    width: 330px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    text-align: center;
+}
+
+.form-container h2 {
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #cccccc;
+    font-size: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #48b84a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: #39a43a;
+}
+
+.login-error {
+    margin-top: 10px;
+    color: red;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.signup-text {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.signup-text a {
+    color: #48b84a;
+    font-weight: bold;
+    text-decoration: none;
+}

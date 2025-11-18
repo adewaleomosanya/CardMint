@@ -1,0 +1,338 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #ff9a9e,
+    #fad0c4,
+    #fbc2eb,
+    #a18cd1,
+    #fbc2eb,
+    #fad0c4,
+    #ff9a9e
+  );
+  background-size: 400% 400%;
+  animation: rainbowBG 15s ease infinite;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  flex-direction: column;     
+  align-items: flex-start;     
+  gap: 8px;                    
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-top {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;  
+    align-items: center;
+}
+
+.container {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.create-section, .list-section {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  flex: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.create-section label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+textarea, input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  resize: none;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #34495e;
+}
+
+.flashcard {
+  width: 250px;
+  height: 150px;
+  perspective: 1000px;
+  position: relative;
+  cursor: pointer;
+}
+
+.flashcard .front,
+.flashcard .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #fad0c4;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  backface-visibility: hidden;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  transition: transform 0.6s ease;
+}
+
+.flashcard .back {
+  transform: rotateY(180deg);
+}
+
+.flashcard.flip .front {
+  transform: rotateY(180deg);
+}
+
+.flashcard.flip .back {
+  transform: rotateY(360deg);
+}
+
+.flashcard-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+
+.flashcard-item {
+  background: white;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.card-wrapper {
+  text-align: center;
+}
+
+.card-wrapper h4 {
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+
+.logout-btn {
+    background-color: white;
+    color: #2c3e50;
+    border: 2px solid #2c3e50;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.logout-btn:hover {
+    background-color: #ecf0f1;
+}
+
+.edit-btn, .delete-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+}
+
+.edit-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  width: 70%;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.modal-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.edit-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-side textarea {
+  height: 150px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #bbb;
+  background: #eef2ff;
+  font-size: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.save-btn {
+  background: #2c3e50;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #ff4d4d;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-btn {
+  margin-top: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #6c63ff;
+  color: white;
+  cursor: pointer;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #2c3e50;
+  color: white;
+  position: fixed;   
+  bottom: 0;
+  width: 100%;
+}
+
+
+.content {
+  padding-bottom: 80px; 
+}
+
+@keyframes rainbowBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+#toastContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  background: #2c3e50;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  animation: slideIn 0.4s ease forwards, fadeOut 0.5s ease 3s forwards;
+  opacity: 0;
+}
+
+@keyframes slideIn {
+  from { 
+    transform: translateX(50px); 
+    opacity: 0;
+  }
+  to { 
+    transform: translateX(0); 
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  to { 
+    opacity: 0; 
+    transform: translateX(50px);
+  }
+}
+
