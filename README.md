@@ -13,7 +13,7 @@ Just open: frontend/login.html
 
 
 ## Requirements
-* [ ] User Registration - The system shall allow users to register with email and
+* [x] User Registration - The system shall allow users to register with email and
 password.
 
 
