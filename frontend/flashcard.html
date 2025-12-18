@@ -4,27 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flashcards</title>
-  <link rel="stylesheet" href="flashcard.css" />
+  <link rel="stylesheet" href="/frontend/flashcard.css">
 </head>
-<div id="toastContainer"></div>
 <body>
   <header>
-  <div class="header-top">
-    <h2>Welcome to CardMint, <span id="usernameDisplay"></span>!</h2>
-    <a href="login.html" id="logoutBtn" class="logout-btn">Logout</a>
-  </div>
-
-  <p class="motto">Create, flip, and master your notes.</p>
-  <p id="loginStatus" style="color: red; font-weight: bold;"></p>
-</header>
-
+    <div class="header-top">
+      <h2>Welcome to CardMint, <span id="usernameDisplay"></span>!</h2>
+      <a href="frontend/login.html" id="logoutBtn" class="logout-btn">Logout</a>
+    </div>
+    <p class="motto">Create, flip, and master your notes.</p>
+    <p id="loginStatus" style="color: red; font-weight: bold;"></p>
+  </header>
 
   <main class="container">
     <section class="create-section">
       <h3>Create a Flashcard</h3>
-      <label for="title">Flashcard Title</label>
-      <input type="text" id="title" placeholder="Enter flashcard title" />
 
+      <label>Deck Mode</label>
+      <div class="deck-mode">
+        <label><input type="radio" name="deckMode" value="new" checked> Create new deck</label>
+        <label><input type="radio" name="deckMode" value="existing"> Add to existing deck</label>
+      </div>
+      <div id="newDeckFields">
+        <label for="deckName">Deck Name</label>
+        <input type="text" id="deckName" placeholder="Enter deck name" />
+        <label for="deckDesc">Deck Description (optional)</label>
+        <textarea id="deckDesc" placeholder="Description (optional)"></textarea>
+      </div>
+      <div id="existingDeckFields" style="display:none">
+        <label for="existingDecks">Choose Deck</label>
+        <select id="existingDecks"></select>
+      </div>
+
+      <label for="title">Card Title (optional)</label>
+      <input type="text" id="title" placeholder="Optional card title" />
       <div class="card-preview">
         <div class="flashcard" id="previewCard">
           <div class="front">
@@ -41,44 +54,32 @@
 
       <button id="saveFlashcard">Save Flashcard</button>
     </section>
-
     <section class="list-section">
-      <h3>My Flashcards</h3>
-      <div id="flashcardList" class="flashcard-list"></div>
+      <h3>My Decks</h3>
+      <div id="deckList" class="deck-list"></div>
     </section>
   </main>
-
-<div id="editModal" class="modal hidden">
+  <div id="toastContainer" class="toast-container"></div>
+  <div id="editModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Edit Card</h3>
+      <textarea id="editFront" placeholder="Edit question"></textarea>
+      <textarea id="editBack" placeholder="Edit answer"></textarea>
+      <button id="saveEditBtn">Save</button>
+      <button id="closeEditModal">Close</button>
+    </div>
+  </div>
+  <div id="confirmModal" class="modal">
   <div class="modal-content">
+      <h3>Delete Deck?</h3>
+      <p>This action cannot be undone.</p>
 
-    <button class="close-btn" id="closeEditModal">&times;</button>
-
-    <div class="modal-body">
-
-      <div class="edit-side">
-        <h3>Front</h3>
-        <textarea id="editFront"></textarea>
+      <div class="modal-actions">
+          <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+          <button class="delete-btn" id="confirmDeleteBtn">Delete</button>
       </div>
-
-      <div class="edit-side">
-        <h3>Back</h3>
-        <textarea id="editBack"></textarea>
-      </div>
-
-    </div>
-
-    <div class="modal-footer">
-      <button id="saveEditBtn" class="save-btn">Save Changes</button>
-      <button id="deleteCardBtn" class="delete-btn">Delete</button>
-    </div>
-
   </div>
 </div>
-
-<footer>
-    &copy; 2025 CardMint. All rights reserved.
-  </footer>
-
-  <script src="flashcard.js"></script>
+  <script src="/frontend/flashcard.js" defer></script>
 </body>
 </html>

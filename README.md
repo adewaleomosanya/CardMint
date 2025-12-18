@@ -15,6 +15,15 @@ Just open: frontend/login.html
 ## Requirements
 * [x] User Registration - The system shall allow users to register with email and
 password.
-
-
-
+* [x] User Login - The system shall allow users to log in with their credentials.
+* [x] Password Security - Passwords shall be hashed before being stored in the database.
+* [x] Flashcard Creation Users shall be able to create flashcards (question & answer).
+* [x] Flashcard Management - Users shall be able to edit and delete flashcards.
+* [x] Flashcard Display - Flashcards shall flip to reveal answers when clicked.
+* [x] Data Storage The system shall store flashcards and user data persistently.
+* [x] Logout - Users shall be able to securely log out of their accounts.
+* [x] Deck creation - The system shall allow users to create decks for grouping related flashcards.
+* [x] Deck Review - The system shall allow users to open a deck and review flashcards one at a time.
+* [x] Learning Progress Tracking - The system shall calculate and store the user’s learning performance for each deck based on right/wrong responses.
+* [] PDF Upload Users shall be able to upload PDF files.
+* [x] Text Extraction The system shall extract readable text from uploaded PDFs.

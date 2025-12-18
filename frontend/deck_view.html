@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deck Viewer</title>
+
+  <link rel="stylesheet" href="/frontend/deck_view.css">
+  <script defer src="/frontend/deck_view.js"></script>
+</head>
+
+<body>
+  <div class="deck-header">
+      <h2 id="deckTitle"></h2>
+      <button class="back-btn" onclick="goBack()">← Back to Decks</button>
+      <button class="study-mode-btn" onclick="startStudyMode()">Study Mode</button>
+  </div>
+
+  <div id="studyModal" class="study-modal">
+    <div class="study-card" id="studyCard">
+        <div class="study-inner">
+            <div class="study-front">
+                <div id="studyQuestion" class="study-text"></div>
+            </div>
+            <div class="study-back">
+                <div id="studyAnswer" class="study-text"></div>
+
+                <div style="display:flex; gap:12px; justify-content:center;">
+                    <button id="studyCorrect" class="study-btn correct">Got it</button>
+                    <button id="studyWrong" class="study-btn wrong">Wrong</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="nextCardBtn" class="study-btn" style="display:none;">Next</button>
+    <div id="studyProgress"></div>
+    <button id="closeStudyBtn" class="close-study">×</button>
+    <div id="studyEmpty" style="display:none; position:absolute; bottom:20px; color:white; font-weight:600;">
+        No cards to study in this deck.
+    </div>
+  </div>
+
+  <div id="cardsContainer" class="cards-grid"></div>
+  <div id="toastContainer"></div>
+</body>
+</html>
