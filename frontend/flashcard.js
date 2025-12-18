@@ -1,226 +1,235 @@
 function showToast(message) {
     const container = document.getElementById("toastContainer");
-
     const toast = document.createElement("div");
     toast.classList.add("toast");
     toast.innerText = message;
-
     container.appendChild(toast);
 
-    setTimeout(() => {
-        toast.remove();
-    }, 3500);
+    setTimeout(() => toast.remove(), 3400);
 }
-
 
 const flipBtn = document.getElementById("flipPreview");
 const previewCard = document.getElementById("previewCard");
 const saveBtn = document.getElementById("saveFlashcard");
-const flashcardList = document.getElementById("flashcardList");
 
+const deckList = document.getElementById("deckList");
+const existingDecksSelect = document.getElementById("existingDecks");
 
+const newDeckFields = document.getElementById("newDeckFields");
+const existingDeckFields = document.getElementById("existingDeckFields");
+const deckModeRadios = document.getElementsByName("deckMode");
+
+let deckToDelete = null;
 async function loadUserDetails() {
     try {
         const token = localStorage.getItem("access_token");
-        
-        const headers = {};
-        if (token) headers["Authorization"] = `Bearer ${token}`;
+        if (!token) return;
 
-        const response = await fetch("http://127.0.0.1:8000/users/me", {
-            method: "GET",
-            credentials: "include",
-            headers: headers
+        const res = await fetch("http://127.0.0.1:8000/users/me", {
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
-        if (!response.ok) {
-            return;
-        }
+        if (!res.ok) return;
 
-        const user = await response.json();
+        const user = await res.json();
         document.getElementById("usernameDisplay").innerText = user.email;
 
-    } catch (error) {
-        console.error("Error loading user:", error);
+    } catch (err) {
+        console.error("User load error:", err);
     }
 }
+loadUserDetails();
+function updateDeckModeUI() {
+    const mode = Array.from(deckModeRadios).find(r => r.checked).value;
 
-
-
+    newDeckFields.style.display = mode === "new" ? "block" : "none";
+    existingDeckFields.style.display = mode === "existing" ? "block" : "none";
+}
+Array.from(deckModeRadios).forEach(r =>
+    r.addEventListener("change", updateDeckModeUI)
+);
 flipBtn.addEventListener("click", () => {
     previewCard.classList.toggle("flip");
 });
-
-
-
-saveBtn.addEventListener("click", async () => {
-    const title = document.getElementById("title").value.trim();
-    const question = document.getElementById("question").value.trim();
-    const answer = document.getElementById("answer").value.trim();
-
-    if (!title || !question || !answer) {
-        showToast("Please fill all fields.");
-        return;
-    }
-
+async function loadDecks() {
     const token = localStorage.getItem("access_token");
-    if (!token) {
-        showToast("Please log in first.");
-        window.location.href = "/frontend/login.html";
-        return;
-    }
+    deckList.innerHTML = "";
+    existingDecksSelect.innerHTML = "";
 
-    const response = await fetch("http://127.0.0.1:8000/flashcards/create", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            title: title,
-            question: question,
-            answer: answer
-        })
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        showToast("Error: " + data.detail);
-        return;
-    }
-
-    showToast("Flashcard created!");
-
-    
-    document.getElementById("title").value = "";
-    document.getElementById("question").value = "";
-    document.getElementById("answer").value = "";
-    previewCard.classList.remove("flip");
-
-    loadFlashcards();
-});
-
-
-
-async function loadFlashcards() {
-    const token = localStorage.getItem("access_token");
-
-    const response = await fetch("http://127.0.0.1:8000/flashcards/my-cards", {
-        method: "GET",
-        headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    if (!response.ok) {
-        return;
-    }
-
-    const cards = await response.json();
-    flashcardList.innerHTML = "";
-
-    cards.forEach(card => {
-        const wrapper = document.createElement("div");
-        wrapper.classList.add("card-wrapper");
-
-        const cardBox = document.createElement("div");
-        cardBox.classList.add("flashcard");
-
-        const front = document.createElement("div");
-        front.classList.add("front");
-        front.innerHTML = `<h4>${card.title}</h4><p>${card.question}</p>`;
-
-        const back = document.createElement("div");
-        back.classList.add("back");
-        back.innerHTML = `<p>${card.answer}</p>`;
-
-        cardBox.appendChild(front);
-        cardBox.appendChild(back);
-
-        cardBox.addEventListener("click", () => {
-            cardBox.classList.toggle("flip");
+    try {
+        const res = await fetch("http://127.0.0.1:8000/decks/my-decks", {
+            headers: { "Authorization": `Bearer ${token}` }
         });
 
-        
-        const editBtn = document.createElement("button");
-        editBtn.classList.add("edit-btn");
-        editBtn.innerText = "Edit";
-        editBtn.onclick = () => openEditModal(card);
+        if (!res.ok) throw new Error("Failed to fetch decks");
 
-        
-        const deleteBtn = document.createElement("button");
-        deleteBtn.classList.add("delete-btn");
-        deleteBtn.innerText = "Delete";
-        deleteBtn.onclick = () => deleteFlashcard(card.id);
+        const decks = await res.json();
 
-        wrapper.appendChild(cardBox);
-        wrapper.appendChild(editBtn);
-        wrapper.appendChild(deleteBtn);
+        existingDecksSelect.innerHTML = `<option value="">Select deck</option>`;
 
-        flashcardList.appendChild(wrapper);
-    });
+        for (const d of decks) {
+            const cardRes = await fetch(`http://127.0.0.1:8000/decks/${d.id}/cards`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            let cards = [];
+            if (cardRes.ok) cards = await cardRes.json();
+
+            const cardCount = cards.length;
+
+            const box = document.createElement("div");
+            box.className = "deck-box";
+            box.innerHTML = `
+                <div class="deck-card">
+                    <h3 class="deck-title">${d.name}</h3>
+                    <p class="deck-count">${cardCount} ${cardCount === 1 ? "card" : "cards"}</p>
+
+                    <div class="deck-buttons">
+                        <button class="study-btn" onclick="openDeck(${d.id})">Study</button>
+                        <button class="delete-deck-btn" onclick="showDeleteModal(${d.id})">Delete</button>
+                    </div>
+                </div>
+            `;
+
+            deckList.appendChild(box);
+
+            const opt = document.createElement("option");
+            opt.value = d.id;
+            opt.innerText = d.name;
+            existingDecksSelect.appendChild(opt);
+        }
+
+        if (decks.length === 0) {
+            deckList.innerHTML = "<p>No decks found.</p>";
+            existingDecksSelect.innerHTML = `<option value="">No decks available</option>`;
+        }
+
+    } catch (err) {
+        console.error(err);
+        deckList.innerHTML = "<p>Error loading decks.</p>";
+        existingDecksSelect.innerHTML = `<option value="">Error loading decks</option>`;
+    }
 }
+loadDecks();
 
-
-
-
-let currentEditingId = null;
-
-function openEditModal(card) {
-    currentEditingId = card.id;
-
-    document.getElementById("editFront").value = card.question;
-    document.getElementById("editBack").value = card.answer;
-
-    document.getElementById("editModal").classList.remove("hidden");
+function openDeck(deckId) {
+    window.location.href = `/frontend/deck_view.html?deck=${deckId}`;
 }
-
-document.getElementById("closeEditModal").addEventListener("click", () => {
-    document.getElementById("editModal").classList.add("hidden");
-});
-
-document.getElementById("saveEditBtn").addEventListener("click", async () => {
+saveBtn.addEventListener("click", async () => {
     const token = localStorage.getItem("access_token");
 
-    const updated = {
-        question: document.getElementById("editFront").value,
-        answer: document.getElementById("editBack").value
-    };
+    if (!token) {
+        showToast("Login required");
+        return;
+    }
 
-    const response = await fetch(`http://127.0.0.1:8000/flashcards/update/${currentEditingId}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(updated)
-    });
+    const title = document.getElementById("title").value.trim() || null;
+    const question = document.getElementById("question").value.trim();
+    const answer = document.getElementById("answer").value.trim();
+    const deckMode = Array.from(deckModeRadios).find(r => r.checked).value;
 
-    if (response.ok) {
-        showToast("Flashcard updated!");
-        document.getElementById("editModal").classList.add("hidden");
-        loadFlashcards();
+    if (!question || !answer) {
+        showToast("Enter question & answer");
+        return;
+    }
+
+    let deckId = null;
+    if (deckMode === "new") {
+        const deckName = document.getElementById("deckName").value.trim();
+        const deckDesc = document.getElementById("deckDesc").value.trim();
+
+        if (!deckName) {
+            showToast("Enter a deck name");
+            return;
+        }
+
+        try {
+            const res = await fetch("http://127.0.0.1:8000/decks/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ name: deckName, description: deckDesc })
+            });
+
+            if (!res.ok) throw new Error("Failed to create deck");
+
+            const deck = await res.json();
+            deckId = deck.id;
+
+            showToast("New deck created!");
+            await loadDecks();
+
+            existingDecksSelect.value = deckId;
+
+        } catch (err) {
+            console.error(err);
+            showToast("Error creating deck");
+            return;
+        }
+
     } else {
-        showToast("Update failed.");
+        deckId = existingDecksSelect.value;
+        if (!deckId) {
+            showToast("Select a deck first");
+            return;
+        }
+    }
+    try {
+        const cardRes = await fetch("http://127.0.0.1:8000/flashcards/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ title, question, answer, deck_id: deckId })
+        });
+
+        if (!cardRes.ok) throw new Error("Card creation failed");
+        document.getElementById("title").value = "";
+        document.getElementById("question").value = "";
+        document.getElementById("answer").value = "";
+        document.getElementById("deckName").value = "";
+        document.getElementById("deckDesc").value = "";
+
+        previewCard.classList.remove("flip");
+        showToast("Flashcard saved!");
+
+        await loadDecks();
+
+    } catch (err) {
+        console.error(err);
+        showToast("Error saving flashcard");
     }
 });
 
+function showDeleteModal(deckId) {
+    deckToDelete = deckId;
+    document.getElementById("confirmModal").style.display = "flex";
+}
 
-async function deleteFlashcard(cardId) {
+function closeModal() {
+    document.getElementById("confirmModal").style.display = "none";
+}
+
+document.getElementById("confirmDeleteBtn").onclick = async function () {
+    await deleteDeck(deckToDelete);
+    closeModal();
+};
+
+async function deleteDeck(deckId) {
     const token = localStorage.getItem("access_token");
 
-    const response = await fetch(`http://127.0.0.1:8000/flashcards/delete/${cardId}`, {
+    const res = await fetch(`http://127.0.0.1:8000/decks/delete/${deckId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
     });
 
-    if (response.ok) {
-        showToast("Flashcard deleted!");
-        loadFlashcards();
+    if (res.ok) {
+        showToast("Deck deleted");
+        loadDecks();
     } else {
-        showToast("Failed to delete flashcard.");
+        showToast("Failed to delete deck");
     }
 }
-
-
-
-loadUserDetails();
-loadFlashcards();
